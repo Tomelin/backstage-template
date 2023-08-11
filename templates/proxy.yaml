@@ -1,0 +1,53 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: validate-proxy-from-backstage
+  title: Validate proxy and workflow
+  description: This template try the connection fbetween proxy and external API
+spec:
+  owner: user:guest
+  type: service
+
+  parameters:
+    - title: Fill in some steps
+      required:
+        - namespace
+        - workflowPath
+        - token
+      properties:
+        namespace:
+          title: namespace
+          type: string
+          description: Namespace of job in argo workflow
+        workflowPath:
+          title: workflowPath
+          type: string
+          description: Path of argo workflow request
+        workflowUrl:
+          title: workflowUrl
+          type: string
+          description: URL from argo workflow
+        token:
+          title: token
+          type: string
+          description: Authorization token
+
+  steps:
+    # Each step executes an action, in this case one templates files into the working directory.
+    - id: fetch-proxy
+      name: Fetch Proxy
+      action: fetch:proxy
+      input:
+        token: ${{ parameters.token }}
+        workflowPath: ${{ parameters.workflowPath }}
+        workflowUrl: ${{ parameters.workflowUrl }}
+        namespace: ${{ parameters.namespace }}
+
+  # # Outputs are displayed to the user after a successful execution of the template.
+  # output:
+  #   links:
+  #     - title: Repository
+  #       url: ${{ steps['publish'].output.remoteUrl }}
+  #     - title: Open in catalog
+  #       icon: catalog
+  #       entityRef: ${{ steps['register'].output.entityRef }}
